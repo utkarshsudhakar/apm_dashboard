@@ -1,0 +1,58 @@
+<html>
+<head>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+  <style>
+  .bx-wrapper, .bx-viewport {
+    height: 700px !important; //provide height of slider
+}
+  
+  </style>
+  <script>
+    $(document).ready(function(){
+	
+var img=13;
+var graph=5;
+var misc=5;
+var iframe=["chart.html","summary.html","https://digitaslbiuk-paid.saas.appdynamics.com/controller/dashboards.jsp#/location=DASHBOARD_VIEWER&token=e5b68014-560c-42ab-984f-b2ba6b4ec3ff&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15","http://bangvmpsststc07.sapient.com:5601/goto/7d9a4a5a74fb7e92224f7aa7ed6e528d","http://bangvmpsststc07.sapient.com:5601/goto/c4b6bb249738ed8112f1140c795ab485","http://10.150.4.216:8090/controller/dashboards.jsp#/location=DASHBOARD_VIEWER&token=a81992b6-b8cc-4726-ad3d-684b258e5ad5&timeRange=last_1_month.BEFORE_NOW.-1.-1.43200"]
+	
+	
+	for(var i=1;i<=img;i++){
+ 
+ $(".slider").append("<div> <img src='img/img"+i+".jpg' height=100% width=100% /></div>")
+ //$(".slider").append("<iframe src='"+iframe[j]+"' width=100% height=100%>Image not Available.</iframe>")
+
+ }
+ for(var i=0;i<iframe.length;i++){
+ 
+ $(".slider").append("<iframe src='"+iframe[i]+"' width=100% height=100%>Image not Available.</iframe>")
+ }
+  
+  
+  $('.slider').bxSlider({
+  auto: true,
+  autoControls: true,
+  stopAutoOnClick: true,
+  pager: true,
+  slideWidth: 1378,
+  shuffle:1,
+  
+  
+});
+    });
+  </script>
+  
+  
+
+</head>
+<body>
+
+  <div class="slider">
+    <div><img src='img/texttt.gif' height=100% width=100%/></div>
+    
+  </div>
+
+</body>
+</html>

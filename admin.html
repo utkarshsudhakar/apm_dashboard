@@ -1,0 +1,322 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="layout.css">
+<link rel="shortcut icon" type="image/png" href="favicon.png"/>
+<style>
+
+body{
+background:grey;
+color:#fff;
+}
+
+#emailbody,#healthrulebody,#templatebody{
+float:left;
+margin-left:5%;
+width:50%;
+height:50%;
+text-align:left;
+
+
+}
+
+#menu{
+
+height:100%;
+width:20%;
+background:#e1e1e1;
+margin-top:-20px;
+float:left;
+
+
+}
+table{
+color:#404040;
+width:100%;
+//border-collapse: collapse;
+
+}
+td,th {
+    border-bottom: 1px solid #d8d8d8;
+    text-align: left;
+    padding: 4px;
+}
+
+th{
+background:#5bdbc2;
+
+}
+
+img{
+height:30px;
+width:30px;
+
+}
+
+#t1,#t2,#t3,#t4,#t5,#t6{
+display:none;
+text-align:center;
+
+}
+
+
+			tr:hover{
+				
+				background:#3b4045;
+				border-bottom:4px solid #5fb000;
+				color:#fff;
+				
+				
+			}
+
+			
+
+
+</style>
+
+
+<script>
+
+
+
+var changeTab =function(value,object){  
+								
+						var j=parseInt(value);
+						
+						for(var i=1;i<7;i++)
+				{
+					
+					if(i==parseInt(value))
+					{
+					document.getElementById('t'+i).style.display="block";
+					
+					
+					}
+						
+					else
+						{document.getElementById('t'+i).style.display="none";
+						
+						}
+						
+				}
+						
+			
+						
+				}
+
+</script>
+
+
+<title>
+Welcome
+</title>
+</head>
+
+<body onload="initialize()">
+	<nav>
+	<a href="summary.html" class='nav-items'  style="margin-left:45%"> Summary	</a><a href="#" class='nav-items' > ALM Machine	</a>  <a href="#" class='nav-items' > PC Machine	</a><a href="#" class='nav-items' > DB Machine	</a><a href="#" class='nav-items' onclick='changeTab("5",this)'> CI Machines	</a>
+	<img src="logo.png" style="height: 45px;margin-left: 2px;float: left;margin-top:3px">
+	</nav>
+	
+<div id="menu">
+<table>
+<tr onclick="changeTab('1',this)" ><td><img src="mail.png" ></td><td>Email Template </td> </tr>
+<tr onclick="changeTab('2',this)"><td><img src="health.png" ></td><td>Health Rules</td></tr>
+<tr onclick='changeTab("3",this)'><td><img src="alert.png" ></td><td>Alert Policy</td></tr>
+<tr onclick='changeTab("4",this)'><td><img src="email.png" ></td><td>Emails</td></tr>
+</table>
+
+<p style="color:#787878;text-align:center;margin-top:10%;font-size:15px;">CONFIGURATION</p>
+<table>
+<tr onclick='changeTab("5",this)'><td><img src="server.png" ></td><td>Add Server</td></tr>
+<tr onclick='changeTab("6",this)'><td><img src="group.png" ></td><td>Add Group</td></tr>
+</table>
+</div>
+<div id="t1">
+<h1>Email Template</h1>
+<div id="templatebody">
+<form method="POST" action="addtemplate.php" id="template">
+Template name: <br/><br/><input type="text" name="name" placeholder="Template Name"> <br/><br/>
+Message: <br/><br/><textarea rows="5" cols="40" name="message" form="template" placeholder="Enter Message here ..."></textarea> &nbsp;
+<input class="btn" type="submit" name="submit" value="ADD >>"> 
+
+</form>
+
+<table  style="background:#fff;border-collapse:collapse;	">
+<tr><th>S.No.</th><th>Template Name</th><th>Message</th></tr>
+<?php
+include 'db.php';
+
+$query="SELECT * FROM templates";
+$result=$con->query($query);
+
+while($row=$result->fetch_assoc())
+{
+
+echo "<tr><td>{$row['sno']}</td><td>{$row['name']}</td><td>{$row['message']}</td></tr>";
+
+}
+
+
+?>
+</table>
+</div>
+
+
+
+</div>
+<?php
+include 'db.php';
+
+$query="SELECT * FROM healthrules";
+$result=$con->query($query);
+
+while($row=$result->fetch_assoc())
+{
+//session_start();
+$_SESSION['warning']=$row['warning'];
+$_SESSION['critical']=$row['critical'];
+}
+
+
+?>
+
+
+<div id="t2">
+<h1>Health Rules</h1>
+<div id="healthrulebody" >
+<table  style="border:none;color:#fff;padding:2px">
+<form method="POST" action="healthrule.php">
+<tr><td style="border:none;">Warning</td><td style="border:none"><input class="health" type="text" name="warning" value="<?php echo $_SESSION['warning']; ?>" > %</td></tr>
+<tr><td style="border:none;">Critical</td><td style="border:none"><input class="health" type="text" name="critical" value="<?php echo $_SESSION['critical']; ?>" > %</td></tr>
+</table>	
+<input  type="submit" class="btn"  name="submit" value="Save">
+</form>
+</div>
+
+
+</div>
+<div id="t3">
+<h1>Alert Policy</h1>
+<div style="text-align:left;margin-left:25%;">
+<form method="POST" action="alertpolicy.php">
+
+
+If Nodes in : <select name="rule">
+<option value="warning" selected="selected">Warning</option> 
+<option value="critical" >Critical</option>     
+</select> <br/><br/>
+
+<p>Send email to : </p> 
+<?php 
+include 'db.php';
+
+$query="SELECT * FROM emails";
+$result=$con->query($query);
+
+while($row=$result->fetch_assoc())
+{
+
+echo "<input type='checkbox' name='email' value='{$row["email"]}'> {$row["email"]} <br/>";
+}
+
+
+?>
+
+<br/>Select Template :  <select name="group" >
+<?php
+include 'db.php';
+
+$query="SELECT name FROM templates";
+$result=$con->query($query);
+
+while($row=$result->fetch_assoc())
+{
+
+echo "<option value = '{$row['name']}'>{$row['name']}</option>";
+}
+
+
+?>
+</select><br/><br/>
+<input class="btn" type="submit" name="submit" value="ADD >>"> 
+</form>
+</div>
+</div>
+<div id="t4">
+<h1>Emails</h1>
+<form method="POST" action="addemail.php">
+<input type="text" name="email" placeholder="Email ID">
+<input type="text" name="phone" placeholder="Phone Number">
+<input class="btn" type="submit" name="submit" value="ADD >>"> 
+
+</form>
+<div id="emailbody">
+<table  style="background:#fff;border-collapse:collapse;">
+<tr><th>S.No.</th><th>Email ID</th><th>Phone Number</th></tr>
+<?php
+include 'db.php';
+
+$query="SELECT * FROM emails";
+$result=$con->query($query);
+
+while($row=$result->fetch_assoc())
+{
+
+echo "<tr><td>{$row['sno']}</td><td>{$row['email']}</td><td>{$row['phone']}</td></tr>";
+}
+
+
+?>
+</table>
+</div>
+
+</div>
+
+<div id="t5">
+<h1>Add Server</h1>
+<form method="POST" action="create.php">
+<input type="text" name="server_name" placeholder="Server Name">
+<input type="text" name="server_ip" placeholder="Server IP">
+<select name="group" >
+<option value='Other' selected='selected'>Select Group</option>
+<?php
+include 'db.php';
+
+$query="SELECT name FROM groups";
+$result=$con->query($query);
+
+while($row=$result->fetch_assoc())
+{
+
+echo "<option value = '{$row['name']}'>{$row['name']}</option>";
+}
+
+
+?>
+
+
+
+</select>
+<input class="btn" type="submit" name="submit" value="Add >>">
+
+
+
+</form>
+
+</div>
+<div id="t6">
+<h1>Add Group</h1>
+<form action="addgroup.php" method="POST">
+ <input type="text" name="group_name" placeholder="Group Name" >
+<input class="btn" type="submit" name="submit" value="Add >>">
+
+
+</form>
+
+
+</div>
+	
+
+
+</body>
+</html>

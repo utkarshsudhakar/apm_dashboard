@@ -1,0 +1,172 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="layout.css">
+<link rel="shortcut icon" type="image/png" href="favicon.png"/>
+
+
+<style>
+
+.server_health{
+border: 1px solid;
+height: 30px;
+width: 30px;
+border-radius: 15px;
+animation-duration:1500ms;
+animation-name:blink;
+animation-iteration-count:infinite;
+animation-direction:alternate;
+-webkit-animation:blink 1500ms infinite;
+box-shadow:6px 6px 6px #000;
+
+}
+
+body{
+background:grey;
+color:#fff;
+}
+
+@keyframes blink{
+
+from{
+opacity:1;
+
+}
+to{
+opacity:0.3;
+
+}
+
+}
+
+table {
+    font-family: arial, sans-serif;
+    color:#fff;
+    border-collapse: collapse;
+    width: 100%;
+	border-radius:8px;
+    background:#616161;
+    
+}
+
+td, th {
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+
+div{
+
+
+}
+
+
+</style>
+
+
+
+<title>
+Welcome
+</title>
+</head>
+
+<body onload="initialize()">
+	<nav>
+	<a href="#" class='nav-items' onclick="changeTab('1',this)" style="margin-left:45%"> Summary	</a><a href="#" class='nav-items' onclick="changeTab('2',this)"> ALM Machine	</a>  <a href="#" class='nav-items' onclick='changeTab("3",this)'> PC Machine	</a><a href="#" class='nav-items' onclick='changeTab("4",this)'> DB Machine	</a><a href="#" class='nav-items' onclick='changeTab("5",this)'> CI Machines	</a>
+	<img src="logo.png" style="height: 45px;margin-left: 2px;float: left;margin-top:3px">
+	</nav>
+	
+
+	<div style="display:none" id="t1">
+	</div>
+	
+	<?php
+	if(isset($_POST['duration']))
+{
+$duration=$_POST['duration'];
+
+}
+else
+$duration=5;
+$selected = $duration;
+?>
+	
+<form method="post" action="summary.html">
+
+ <select name='duration' selected="selected">
+ 
+  <option value="5" <?php if($selected == '5'){echo("selected");}?>  >Last 5 minutes</option>
+  <option value="15" <?php if($selected == '15'){echo("selected");}?>  >Last 15 minutes</option>
+  <option value="30" <?php if($selected == '30'){echo("selected");}?>  >Last 30 minutes</option>
+  <option value="60"<?php if($selected == '60'){echo("selected");}?>  >Last 1 hour</option>
+</select> 
+<input class="btn" type="submit" name="submit" value="Go">
+</form>	
+		
+
+
+
+
+
+<?php
+include 'db.php';
+
+function compare_yel($value){
+
+if($value>70 && $value<85)
+return True;
+else
+return False;
+
+}
+
+function compare_red($value){
+
+if($value>85)
+return True;
+else
+return False;
+
+}
+
+
+$query="SELECT server_name FROM servers";
+$result=$con->query($query);
+
+if($result->num_rows>0)
+{
+echo "<table ><th><td><b>Server</td><td><b>CPU%</td><td><b>Memory%</td><td><b>Disk%</td><td><b>Network%</b></td></th>";
+while($row=$result->fetch_assoc())
+{
+
+$query1="SELECT AVG(cpu) as `cpu`,AVG(memory) as mem,AVG(disk) as disk,AVG(network) as nw FROM ".$row['server_name']." where time > date_sub(now(),interval ".$duration." minute)";
+$result1=$con->query($query1);
+
+if($result1->num_rows>0)
+{
+while($row1=$result1->fetch_assoc())
+{
+
+if (compare_red($row1['cpu']) || compare_red($row1['mem']) || compare_red($row1['disk']) || compare_red($row1['nw']))
+$color="red";
+else if (compare_yel($row1['cpu']) || compare_yel($row1['mem']) || compare_yel($row1['disk']) || compare_yel($row1['nw']))
+$color="yellow";
+ 
+else 
+$color="#21ff21";
+echo "<tr class='server_status' > <td cellspacing> <div class='server_health' style='background-color:".$color."' > </div> </td><td >".$row['server_name']."</td><td >".round($row1['cpu'],2)."</td><td >".round($row1['mem'],2)."</td><td >".round($row1['disk'],2)."</td><td >".round($row1['nw'],2)."</td></tr>";
+
+}
+}
+
+
+}
+}
+echo "</table>";
+
+
+?>
+
+
+</body>
+</html>

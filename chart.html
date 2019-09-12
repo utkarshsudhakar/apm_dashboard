@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/Chart.min.js"></script>
+		<title>ChartJS - LineGraph</title>
+		<style>
+		
+		
+		body{
+		background:#000;
+		}
+			.chart-container {
+				width: 30%;
+				height: auto;
+				display:inline-block;
+				
+				
+			}
+			
+			#mycanvas,#mycanvas1,#mycanvas2{
+			display:inline;
+			
+			
+			}
+		</style>
+		
+<script>
+
+			
+
+function myfunction(){
+
+setInterval(function(){
+	$.ajax({
+		url : "http://localhost/psst_dashboard/json.php",
+		type : "GET",
+		success : function(data){
+			console.log(data);
+
+			var time = [];
+			var cpu = [];
+			var mem = [];
+			var disk = [];
+
+			for(var i in data) {
+				time.push(data[i].time);
+				cpu.push(data[i].cpu);
+				mem.push(data[i].memory);
+				disk.push(data[i].disk);
+			}
+
+			var chartdata = {
+				labels: time,
+				datasets: [
+					{
+						label: "cpu",
+						fill: true,
+						//lineTension: 0.1,
+						backgroundColor: "#76da0b",
+						borderColor: "green",
+						//borderColor: "rgba(59, 89, 152, 1)",
+						//pointHoverBackgroundColor: "rgba(59, 89, 152, 1)",
+						//pointHoverBorderColor: "rgba(59, 89, 152, 1)",
+						data: cpu
+					}
+					
+				]
+			};
+			
+			
+			
+			var chartdata1 = {
+				labels: time,
+				datasets: [
+					
+					{
+						label: "memory",
+						fill: true,
+						lineTension: 0.1,
+						backgroundColor: "#00ffdb",
+						borderColor: "rgba(29, 202, 255, 1)",
+						pointHoverBackgroundColor: "rgba(29, 202, 255, 1)",
+						pointHoverBorderColor: "rgba(29, 202, 255, 1)",
+						data: mem
+					}
+			]
+			};
+			
+			var chartdata2 = {
+				labels: time,
+				datasets: [
+					
+					{
+						label: "disk",
+						fill: true,
+						lineTension: 0.1,
+						backgroundColor: "rgba(211, 72, 54, 1)",
+						borderColor: "rgba(211, 72, 54, 1)",
+						pointHoverBackgroundColor: "rgba(211, 72, 54, 1)",
+						pointHoverBorderColor: "rgba(211, 72, 54, 1)",
+						data: disk
+					}
+			]
+			};
+			
+			var ctx = $("#mycanvas");
+			var ctx1 = $("#mycanvas1");
+			var ctx2 = $("#mycanvas2");
+	
+			
+
+			var LineGraph = new Chart(ctx, {
+			
+			options: {
+        scales: {
+          xAxes: [{
+            display: false
+          }],
+          yAxes: [{
+            display: true,
+			gridLines: {
+                    display:true,
+					color:"#fff"
+                },
+				
+				ticks: {
+                                beginAtZero: true,
+                                stepSize: 20,
+                                max: 100
+                            }
+			
+			
+          }],
+        }
+      },
+				zoomEnabled: false,
+				type: 'line',
+				scaleShowGridLines: false,
+				
+				scaleShowLabels: false,
+				
+				data: chartdata
+			}); 
+			
+			var LineGraph1 = new Chart(ctx1, {
+			
+			
+			options: {
+        scales: {
+          xAxes: [{
+            display: false
+          }],
+          yAxes: [{
+            display: true,
+			
+			gridLines: {
+                    display:true,
+					color:"#fff"
+                },
+				
+				ticks: {
+                                beginAtZero: true,
+                                stepSize: 20,
+                                max: 100
+                            }
+			
+          }],
+        }
+      },
+			
+				zoomEnabled: false,
+				type: 'line',
+				scaleShowGridLines: false,
+				data: chartdata1
+			});
+			
+			
+			var LineGraph2 = new Chart(ctx2, {
+			
+			
+			options: {
+        scales: {
+          xAxes: [{
+            display: false,
+					
+			
+          }],
+          yAxes: [{
+            display: true,
+			
+			gridLines: {
+                    display:true,
+					color:"#fff"
+                },
+				
+				ticks: {
+                                beginAtZero: true,
+                                stepSize: 20,
+                                max: 100
+                            }
+				
+				
+          }],
+        }
+      },
+				zoomEnabled: true,
+				type: 'line',
+				scaleShowGridLines: false,
+				data: chartdata2
+			});
+		},
+		error : function(data) {
+
+		}
+	});
+	
+	
+	
+	
+
+},5000);
+}
+
+
+$(document).ready(function(){
+
+myfunction();
+});
+
+
+
+Chart.defaults.global.defaultFontColor='#fff';
+
+</script>
+		
+	</head>
+	<body>
+	<h2 style="color:#fff; text-align:center;">ALM Server</h2>
+		<div class="chart-container">
+		
+			<canvas id="mycanvas"></canvas>
+			</div>
+			<div class="chart-container">
+			<canvas id="mycanvas1"></canvas>
+			</div>
+			<div class="chart-container">
+			<canvas id="mycanvas2"></canvas>
+		</div>
+		
+		<!-- javascript -->
+		
+		
+	</body>
+</html>
+
